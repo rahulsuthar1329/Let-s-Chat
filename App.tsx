@@ -6,17 +6,14 @@ import HomeScreen from './screens/HomeScreen/HomeScreen';
 import LoginScreen from './screens/LoginScreen/LoginScreen';
 import ChatScreen from './screens/ChatScreen/ChatScreen';
 import Conversation from './screens/Conversation/Conversation';
-import {requestStoragePermission} from './permissions/StoragePermission';
 import ImageGallery from './screens/ImageGallery/ImageGallery';
 
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
-  requestStoragePermission();
-
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={Screen.gallery}>
+      <Stack.Navigator initialRouteName={Screen.login}>
         <Stack.Screen
           name={Screen.home}
           component={HomeScreen}

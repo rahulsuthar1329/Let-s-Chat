@@ -1,14 +1,17 @@
-import {View, Text, Image} from 'react-native';
+import {View} from 'react-native';
 import React, {useState} from 'react';
 import InputText from './../../components/InputText/InputText';
 import styles from './LoginScreen.styled';
 import Button from '../../components/Button/Button';
 import Img from '../../assets/login.jpg';
-import Animated, {FadeIn, FadeInUp, FadeOut} from 'react-native-reanimated';
+import * as Screen from '../index';
+import Animated, {FadeInUp} from 'react-native-reanimated';
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleLogin = () => navigation.navigate(Screen.chat);
 
   return (
     <View style={styles.container}>
@@ -35,7 +38,7 @@ const LoginScreen = () => {
           setState={setPassword}
         />
         <Animated.View entering={FadeInUp.delay(400).duration(200).springify()}>
-          <Button title="Submit" />
+          <Button title="Submit" onPress={handleLogin} />
         </Animated.View>
       </View>
     </View>

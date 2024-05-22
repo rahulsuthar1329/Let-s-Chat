@@ -6,27 +6,19 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import styles from './ChatScreen.styled';
 import Chat from '../../components/Chat/Chat';
 import users from '../../api/ChatCollection';
-import {
-  createLog,
-  logError,
-  logInfo,
-  logWarn,
-} from '../../context/LoggerContext';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ChatScreen = () => {
   const [search, setSearch] = useState('');
 
-  logInfo('File created Successfully.');
-  logWarn('Warning logged!');
-  logError('System got an error!');
-
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Chats</Text>
+      <MaterialCommunityIcons name="account" color={'#000'} size={20} />
       <TextInput
         value={search}
         onChangeText={e => setSearch(e)}

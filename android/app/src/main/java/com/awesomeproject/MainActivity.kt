@@ -1,6 +1,5 @@
 package com.awesomeproject
 
-import cl.hasaezs.rndominantcolor.RNDominantColorPackage
 import android.os.Bundle
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
