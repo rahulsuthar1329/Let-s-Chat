@@ -6,19 +6,23 @@ import {
   Image,
   TextInput,
   ScrollView,
+  Dimensions,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import styles from './Conversation.styled';
 import BackBtn from '../../assets/back.png';
 import Camera from '../../assets/camera.png';
 import More from '../../assets/more.png';
 import Send from '../../assets/send.png';
-import InputText from './../../components/InputText/InputText';
 import Messages from '../../api/Messages';
+import EmojiModal from 'react-native-emoji-modal';
+import InputText from './../../components/InputText/InputText';
+import Octicons from 'react-native-vector-icons/Octicons';
 
 const Conversation: React.FC = ({navigation, route}: any) => {
   const {chatDetails} = route.params;
-
   const [message, setMessage] = useState('');
+  const [emojiModal, setEmojiModal] = useState(false);
 
   const getMessageStyle = (sent: boolean, status: string | null) => {
     if (sent) {
@@ -32,6 +36,11 @@ const Conversation: React.FC = ({navigation, route}: any) => {
   };
   const showProfile = async () => {};
   const goBack = () => navigation.goBack();
+  const toggleEmojiModal = () => setEmojiModal(!emojiModal);
+  const sendMessage = () => {
+    /* encryption */
+  };
+
   return (
     <View style={styles.container}>
       {/* header */}
@@ -87,6 +96,9 @@ const Conversation: React.FC = ({navigation, route}: any) => {
       {/* Input Area */}
       <View style={styles.inputArea}>
         <View style={styles.inputMessage}>
+          <TouchableWithoutFeedback onPress={toggleEmojiModal}>
+            <Octicons name="smiley" size={23} color="#666" />
+          </TouchableWithoutFeedback>
           <TextInput
             placeholder="Write a message..."
             value={message}
@@ -94,10 +106,18 @@ const Conversation: React.FC = ({navigation, route}: any) => {
             style={styles.msgBar}
           />
         </View>
-        <TouchableOpacity activeOpacity={0.8}>
+        <TouchableOpacity activeOpacity={0.8} onPress={sendMessage}>
           <Image source={Send} style={styles.send} />
         </TouchableOpacity>
       </View>
+      {emojiModal && (
+        <EmojiModal
+          onEmojiSelected={emoji => setMessage(message + emoji)}
+          columns={9}
+          containerStyle={styles.containerStyle}
+          searchStyle={styles.emojiSearchBar}
+        />
+      )}
     </View>
   );
 };

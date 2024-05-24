@@ -27,4 +27,9 @@ export default StyleSheet.create({
   inputs: {
     rowGap: 10,
   },
+  links: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 2,
+  },
 });

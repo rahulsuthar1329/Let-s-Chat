@@ -14,15 +14,13 @@ const Chat: React.FC<ChatProps> = ({chatDetails}) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const showConversations = async () => {
-    navigation.navigate('Conversation', {chatDetails});
-  };
+  const openChat = () => navigation.navigate('Conversation', {chatDetails});
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       style={styles.container}
-      onPress={showConversations}>
+      onPress={openChat}>
       <View>
         <Image
           source={{

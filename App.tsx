@@ -7,6 +7,8 @@ import LoginScreen from './screens/LoginScreen/LoginScreen';
 import ChatScreen from './screens/ChatScreen/ChatScreen';
 import Conversation from './screens/Conversation/Conversation';
 import ImageGallery from './screens/ImageGallery/ImageGallery';
+import RegisterScreen from './screens/RegisterScreen/RegisterScreen';
+import ForgotPassword from './screens/ForgotPassword/ForgotPassword';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,8 +22,18 @@ function App(): React.JSX.Element {
           options={{headerShown: false}}
         />
         <Stack.Screen
+          name={Screen.register}
+          component={RegisterScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
           name={Screen.login}
           component={LoginScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name={Screen.forgot_password}
+          component={ForgotPassword}
           options={{headerShown: false}}
         />
         <Stack.Screen

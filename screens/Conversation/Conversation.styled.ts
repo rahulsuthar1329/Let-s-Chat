@@ -113,12 +113,24 @@ export default StyleSheet.create({
     height: 55,
   },
   inputMessage: {
+    flexDirection: 'row',
     backgroundColor: 'white',
     borderRadius: 30,
     width: '80%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingLeft: 10,
   },
   msgBar: {
     paddingVertical: 8,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
+  },
+  emojiSearchBar: {
+    paddingVertical: 15,
+  },
+  containerStyle: {
+    borderRadius: 0,
+    height: '100%',
+    justifyContent: 'space-between',
   },
 });

@@ -6,12 +6,17 @@ import Button from '../../components/Button/Button';
 import Img from '../../assets/login.jpg';
 import * as Screen from '../index';
 import Animated, {FadeInUp} from 'react-native-reanimated';
+import LinkText from '../../components/LinkText/LinkText';
+import Checkbox from '../../components/Checkbox/Checkbox';
 
 const LoginScreen = ({navigation}: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleLogin = () => navigation.navigate(Screen.chat);
+  const toggleRememberMe = () => setRememberMe(!rememberMe);
+  const goToForgetPassword = () => navigation.navigate(Screen.forgot_password);
 
   return (
     <View style={styles.container}>
@@ -37,6 +42,14 @@ const LoginScreen = ({navigation}: any) => {
           state={password}
           setState={setPassword}
         />
+        <View style={styles.links}>
+          <Checkbox
+            title="Remember Me"
+            isSelected={rememberMe}
+            onPress={toggleRememberMe}
+          />
+          <LinkText title="Forgot Password ?" onPress={goToForgetPassword} />
+        </View>
         <Animated.View entering={FadeInUp.delay(400).duration(200).springify()}>
           <Button title="Submit" onPress={handleLogin} />
         </Animated.View>
