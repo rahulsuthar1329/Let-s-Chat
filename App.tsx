@@ -9,50 +9,54 @@ import Conversation from './screens/Conversation/Conversation';
 import ImageGallery from './screens/ImageGallery/ImageGallery';
 import RegisterScreen from './screens/RegisterScreen/RegisterScreen';
 import ForgotPassword from './screens/ForgotPassword/ForgotPassword';
+import {store} from './store';
+import {Provider} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName={Screen.login}>
-        <Stack.Screen
-          name={Screen.home}
-          component={HomeScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={Screen.register}
-          component={RegisterScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={Screen.login}
-          component={LoginScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={Screen.forgot_password}
-          component={ForgotPassword}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={Screen.chat}
-          component={ChatScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={Screen.gallery}
-          component={ImageGallery}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name={Screen.conversation}
-          component={Conversation}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName={Screen.chat}>
+          <Stack.Screen
+            name={Screen.home}
+            component={HomeScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={Screen.register}
+            component={RegisterScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={Screen.login}
+            component={LoginScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={Screen.forgot_password}
+            component={ForgotPassword}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={Screen.chat}
+            component={ChatScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={Screen.gallery}
+            component={ImageGallery}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name={Screen.conversation}
+            component={Conversation}
+            options={{headerShown: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 

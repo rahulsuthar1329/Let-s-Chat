@@ -20,10 +20,10 @@ export default StyleSheet.create({
     marginTop: 10,
     fontWeight: 'bold',
     fontSize: 18,
-    color: 'black',
+    color: '#444',
   },
   subHeading: {
-    color: 'black',
+    color: '#444',
     fontWeight: 'bold',
     fontSize: 16,
     padding: 10,

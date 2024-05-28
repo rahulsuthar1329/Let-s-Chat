@@ -8,13 +8,24 @@ import * as Screen from '../index';
 import Animated, {FadeInUp} from 'react-native-reanimated';
 import LinkText from '../../components/LinkText/LinkText';
 import Checkbox from '../../components/Checkbox/Checkbox';
+import {useAppDispatch} from '../../hooks';
+import {setUser} from '../../features/UserSlice';
+import {showToast} from '../../components/Toast/Toast';
 
 const LoginScreen = ({navigation}: any) => {
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const dispatch = useAppDispatch();
 
-  const handleLogin = () => navigation.navigate(Screen.chat);
+  const handleLogin = () => {
+    if (!username || !email || !password)
+      return showToast('Please fill all the fields.');
+    dispatch(setUser({username, email, password}));
+    navigation.navigate(Screen.chat);
+  };
+
   const toggleRememberMe = () => setRememberMe(!rememberMe);
   const goToForgetPassword = () => navigation.navigate(Screen.forgot_password);
 
@@ -32,13 +43,18 @@ const LoginScreen = ({navigation}: any) => {
       />
       <View style={styles.inputs}>
         <InputText
-          placeholder="Enter Username"
+          placeholder="Username"
           state={username}
           setState={setUsername}
         />
         <InputText
+          placeholder="Email Address"
+          state={email}
+          setState={setEmail}
+        />
+        <InputText
           type="password"
-          placeholder="Enter Password"
+          placeholder="Password"
           state={password}
           setState={setPassword}
         />

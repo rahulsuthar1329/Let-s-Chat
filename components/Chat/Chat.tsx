@@ -4,10 +4,10 @@ import styles from './Chat.styled';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../types/StackNavigator';
-import {ChatDetailsTypes} from '../../types/types';
+import {ChatType} from '../../types/chatTypes';
 
 interface ChatProps {
-  chatDetails: ChatDetailsTypes;
+  chatDetails: ChatType;
 }
 
 const Chat: React.FC<ChatProps> = ({chatDetails}) => {
@@ -15,6 +15,8 @@ const Chat: React.FC<ChatProps> = ({chatDetails}) => {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const openChat = () => navigation.navigate('Conversation', {chatDetails});
+
+  console.log({chatDetails});
 
   return (
     <TouchableOpacity
@@ -24,24 +26,32 @@ const Chat: React.FC<ChatProps> = ({chatDetails}) => {
       <View>
         <Image
           source={{
-            uri: chatDetails.profilePictureUrl,
+            uri:
+              chatDetails.profileImage ||
+              'https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg',
           }}
           style={styles.image}
         />
       </View>
       <View>
-        <Text style={styles.name}>{chatDetails.name}</Text>
-        <Text style={styles.message}>
-          {chatDetails.lastMessage.length > 38
-            ? chatDetails.lastMessage.substring(0, 38) + '...'
-            : chatDetails.lastMessage}
-        </Text>
+        <Text style={styles.name}>{chatDetails.chatName}</Text>
+        {chatDetails.latestMessage && (
+          <Text style={styles.message}>
+            {chatDetails.latestMessage.length > 38
+              ? chatDetails.latestMessage.substring(0, 38) + '...'
+              : chatDetails.latestMessage}
+          </Text>
+        )}
       </View>
       <View style={styles.info}>
         <Text style={styles.time}>13:44</Text>
-        <View style={styles.countContainer}>
-          <Text style={styles.messageCount}>3</Text>
-        </View>
+        {chatDetails.unseenMessageCount ? (
+          <View style={styles.countContainer}>
+            <Text style={styles.messageCount}>
+              {chatDetails.unseenMessageCount}
+            </Text>
+          </View>
+        ) : null}
       </View>
     </TouchableOpacity>
   );

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,6 @@ import {
   Image,
   TextInput,
   ScrollView,
-  Dimensions,
   TouchableWithoutFeedback,
 } from 'react-native';
 import styles from './Conversation.styled';
@@ -16,13 +15,25 @@ import More from '../../assets/more.png';
 import Send from '../../assets/send.png';
 import Messages from '../../api/Messages';
 import EmojiModal from 'react-native-emoji-modal';
-import InputText from './../../components/InputText/InputText';
 import Octicons from 'react-native-vector-icons/Octicons';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {updateChat} from '../../features/ChatSlice';
 
 const Conversation: React.FC = ({navigation, route}: any) => {
   const {chatDetails} = route.params;
   const [message, setMessage] = useState('');
   const [emojiModal, setEmojiModal] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const chats = useAppSelector(state => state.chatReducer);
+
+  useEffect(() => {
+    dispatch(updateChat({chatId: '12345', users: ['12345-Rahul Suthar']}));
+  }, []);
+
+  useEffect(() => {
+    console.log(chats.chats[0].users);
+  }, [chats]);
 
   const getMessageStyle = (sent: boolean, status: string | null) => {
     if (sent) {

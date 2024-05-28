@@ -10,16 +10,25 @@ import {
 import React, {useState} from 'react';
 import styles from './ChatScreen.styled';
 import Chat from '../../components/Chat/Chat';
-import users from '../../api/ChatCollection';
 import Octicons from 'react-native-vector-icons/Octicons';
+import {useAppSelector} from '../../hooks';
+import {useGetChatsQuery} from '../../services/chatApi';
+import Loader from '../../components/Loader/Loader';
+import SomethingWendWrong from '../../components/SomethingWentWrong/SomethingWendWrong';
 
 const ChatScreen = () => {
   const [search, setSearch] = useState('');
+  const {user} = useAppSelector(state => state.userReducer);
+  const {data, error, isLoading} = useGetChatsQuery();
+
+  if (isLoading) return <Loader />;
+  if (error) return <SomethingWendWrong />;
+  console.log(data);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.heading}>Conversations</Text>
+        <Text style={styles.heading}>Hi, {user.username}</Text>
         <View style={styles.searchbar}>
           <Octicons name="search" size={20} color={'#949393'} />
           <TextInput
@@ -35,17 +44,19 @@ const ChatScreen = () => {
         <FlatList
           style={styles.recent}
           horizontal
-          data={users}
-          keyExtractor={(item, index) => index.toString() + item.name}
+          data={data?.chats}
+          keyExtractor={(item, index) => index.toString() + item?.chatName}
           renderItem={({item}) => (
             <TouchableOpacity activeOpacity={0.8} style={styles.recentChat}>
               <Image
                 source={{
-                  uri: item.profilePictureUrl,
+                  uri:
+                    item?.profileImage ||
+                    'https://buffer.com/library/content/images/size/w1200/2023/10/free-images.jpg',
                 }}
                 style={styles.image}
               />
-              <Text style={styles.name}>{item.name.split(' ')[0]}</Text>
+              <Text style={styles.name}>{item?.chatName?.split(' ')[0]}</Text>
             </TouchableOpacity>
           )}
           contentContainerStyle={styles.recentChatInnerStyles}
@@ -56,9 +67,9 @@ const ChatScreen = () => {
         <Text style={styles.subHeading}>Messages</Text>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={users}
+          data={data?.chats}
           contentContainerStyle={styles.conversationInnerStyle}
-          keyExtractor={(item, index) => item.name + index.toString()}
+          keyExtractor={(item, index) => item?.chatName + index.toString()}
           renderItem={({item}) => <Chat chatDetails={item} />}
         />
       </View>

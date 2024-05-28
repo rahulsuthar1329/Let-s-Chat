@@ -1,53 +1,64 @@
-import {createSlice} from '@reduxjs/toolkit';
-import type {PayloadAction} from '@reduxjs/toolkit';
-import type {RootState} from '../store';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {
+  ChatStateType,
+  ChatType,
+  MessageType,
+  UpdateChatPayload,
+} from '../types/chatTypes';
 
-interface ChatStateType {
-  chatName: string;
-  latestMessage: string;
-  profileImage: string;
-  unseenMessageCount: number;
-  users: [];
-  isGroupChat: boolean;
-  lastSeen: Date;
-  isActive: boolean;
-  adminUsers: [];
-}
+const initialState: ChatStateType = {
+  chats: [
+    {
+      _id: '',
+      chatName: '',
+      latestMessage: '',
+      profileImage: '',
+      unseenMessageCount: 0,
+      users: [],
+      isGroupChat: false,
+      lastSeen: new Date(),
+      isActive: true,
+      adminUsers: [],
+      messages: [],
+    },
+  ],
+};
 
-const;
-
-const initialState: ChatStateType = [
-  {
-    chatName: '',
-    latestMessage: '',
-    profileImage: '',
-    unseenMessageCount: 0,
-    users: [],
-    isGroupChat: false,
-    lastSeen: new Date(),
-    isActive: true,
-    adminUsers: [],
-  },
-];
+const GetChat = (state: ChatType[], chatId: string) =>
+  state.find(chat => chat._id === chatId);
 
 export const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    setChats: state => {
-      state.value += 1;
+    setChats: (state, action: PayloadAction<ChatType[]>) => {
+      state.chats = action.payload;
     },
-    decrement: state => {
-      state.value -= 1;
+    deleteChat: (state, action: PayloadAction<string>) => {
+      state.chats = state.chats.filter(chat => chat._id === action.payload);
     },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
+    addChat: (state, action: PayloadAction<ChatType>) => {
+      state.chats.push(action.payload);
     },
+    updateChat: (
+      state: ChatStateType,
+      action: PayloadAction<UpdateChatPayload>,
+    ) => {
+      const {chatId, ...property} = action.payload;
+      const chat = GetChat(state.chats, action.payload.chatId);
+      if (chat) Object.assign(chat, property);
+    },
+    addMessage: (state, action: PayloadAction<MessageType>) => {
+      const chat = GetChat(state.chats, action.payload.chatId);
+      chat?.messages.push(action.payload);
+    },
+    // deleteMessage: (state, action: PayloadAction<DeleteMessagePayload>) => {
+    //   const chat = GetChat(state.chats, action.payload.chatId);
+    //   chat?.messages = chat?.messages.filter()
+    // },
   },
 });
 
-export const {increment, decrement, incrementByAmount} = chatSlice.actions;
-
-export const selectCount = (state: RootState) => state.counter.value;
+export const {setChats, deleteChat, addChat, updateChat} = chatSlice.actions;
 
 export default chatSlice.reducer;
