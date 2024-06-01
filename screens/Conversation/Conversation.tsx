@@ -5,35 +5,38 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  ScrollView,
   TouchableWithoutFeedback,
+  FlatList,
 } from 'react-native';
 import styles from './Conversation.styled';
 import BackBtn from '../../assets/back.png';
 import Camera from '../../assets/camera.png';
 import More from '../../assets/more.png';
 import Send from '../../assets/send.png';
-import Messages from '../../api/Messages';
 import EmojiModal from 'react-native-emoji-modal';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {updateChat} from '../../features/ChatSlice';
+import {useGetMessagesQuery} from '../../services/chatApi';
+import Loader from '../../components/Loader/Loader';
+import {MessageType} from '../../types/chatTypes';
+import SomethingWendWrong from '../../components/SomethingWentWrong/SomethingWendWrong';
 
 const Conversation: React.FC = ({navigation, route}: any) => {
   const {chatDetails} = route.params;
   const [message, setMessage] = useState('');
   const [emojiModal, setEmojiModal] = useState(false);
+  const user = {_id: '5353'};
 
   const dispatch = useAppDispatch();
-  const chats = useAppSelector(state => state.chatReducer);
+  const {
+    data: messages,
+    error,
+    isLoading,
+  } = useGetMessagesQuery(chatDetails._id);
 
-  useEffect(() => {
-    dispatch(updateChat({chatId: '12345', users: ['12345-Rahul Suthar']}));
-  }, []);
-
-  useEffect(() => {
-    console.log(chats.chats[0].users);
-  }, [chats]);
+  if (isLoading) return <Loader />;
+  if (error) return <SomethingWendWrong />;
 
   const getMessageStyle = (sent: boolean, status: string | null) => {
     if (sent) {
@@ -48,9 +51,7 @@ const Conversation: React.FC = ({navigation, route}: any) => {
   const showProfile = async () => {};
   const goBack = () => navigation.goBack();
   const toggleEmojiModal = () => setEmojiModal(!emojiModal);
-  const sendMessage = () => {
-    /* encryption */
-  };
+  const sendMessage = () => {};
 
   return (
     <View style={styles.container}>
@@ -67,14 +68,14 @@ const Conversation: React.FC = ({navigation, route}: any) => {
             <View>
               <Image
                 source={{
-                  uri: chatDetails.profilePictureUrl,
+                  uri: chatDetails?.profileImage,
                 }}
                 style={styles.image}
               />
             </View>
             <View>
-              <Text style={styles.name}>{chatDetails.name}</Text>
-              <Text style={styles.message}>Last seen at 12:35 PM</Text>
+              <Text style={styles.name}>{chatDetails?.chatName}</Text>
+              <Text style={styles.message}>{chatDetails?.lastSeen}</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -90,18 +91,27 @@ const Conversation: React.FC = ({navigation, route}: any) => {
 
       {/* Chat Area */}
       <View style={styles.chatArea}>
-        <ScrollView>
-          <Text style={styles.tooltip}>13 April 2023</Text>
-          {Messages.map((msg, index) => (
-            <View
-              key={index}
-              style={msg.sent ? styles.sentMessage : styles.receiveMessage}>
-              <Text style={getMessageStyle(msg.sent, msg.status)}>
-                {msg.message}
-              </Text>
-            </View>
-          ))}
-        </ScrollView>
+        <FlatList
+          data={messages}
+          keyExtractor={(_, index: number) => index.toString()}
+          ListHeaderComponent={
+            <Text style={styles.tooltip}>13 April 2023</Text>
+          }
+          renderItem={({item}: {item: MessageType}) => {
+            return (
+              <View
+                style={
+                  item.sender.includes(user._id)
+                    ? styles.sentMessage
+                    : styles.receiveMessage
+                }>
+                <Text style={getMessageStyle(false, 'seen')}>
+                  {item.content}
+                </Text>
+              </View>
+            );
+          }}
+        />
       </View>
 
       {/* Input Area */}

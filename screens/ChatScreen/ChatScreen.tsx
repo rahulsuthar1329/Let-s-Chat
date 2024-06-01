@@ -23,7 +23,6 @@ const ChatScreen = () => {
 
   if (isLoading) return <Loader />;
   if (error) return <SomethingWendWrong />;
-  console.log(data);
 
   return (
     <View style={styles.container}>
