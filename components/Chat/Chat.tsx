@@ -16,8 +16,6 @@ const Chat: React.FC<ChatProps> = ({chatDetails}) => {
 
   const openChat = () => navigation.navigate('Conversation', {chatDetails});
 
-  console.log({chatDetails});
-
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -35,7 +33,7 @@ const Chat: React.FC<ChatProps> = ({chatDetails}) => {
       </View>
       <View>
         <Text style={styles.name}>{chatDetails.chatName}</Text>
-        {chatDetails.latestMessage && (
+        {chatDetails.latestMessage.length > 0 && (
           <Text style={styles.message}>
             {chatDetails.latestMessage.length > 38
               ? chatDetails.latestMessage.substring(0, 38) + '...'

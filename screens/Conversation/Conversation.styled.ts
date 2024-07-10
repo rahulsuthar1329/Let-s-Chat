@@ -64,8 +64,10 @@ export default StyleSheet.create({
     fontSize: 13,
   },
   chatArea: {
-    paddingHorizontal: 10,
     flex: 1,
+  },
+  contentContainerStyle: {
+    paddingHorizontal: 10,
   },
   tooltip: {
     backgroundColor: '#ffffff',

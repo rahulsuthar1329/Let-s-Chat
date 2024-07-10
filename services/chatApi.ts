@@ -9,7 +9,7 @@ export const chatApi = createApi({
     getChats: builder.query<ChatStateType, void>({
       query: () => 'chat/getChats',
     }),
-    getMessages: builder.query<MessageType, void>({
+    getMessages: builder.query<MessageType[], void>({
       query: chatId => `chat/${chatId}/getMessages`,
     }),
   }),

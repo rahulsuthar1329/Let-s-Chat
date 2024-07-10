@@ -14,7 +14,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import {useAppSelector} from '../../hooks';
 import {useGetChatsQuery} from '../../services/chatApi';
 import Loader from '../../components/Loader/Loader';
-import SomethingWendWrong from '../../components/SomethingWentWrong/SomethingWendWrong';
+import SomethingWentWrong from '../../components/SomethingWentWrong/SomethingWentWrong';
 
 const ChatScreen = () => {
   const [search, setSearch] = useState('');
@@ -22,7 +22,7 @@ const ChatScreen = () => {
   const {data, error, isLoading} = useGetChatsQuery();
 
   if (isLoading) return <Loader />;
-  if (error) return <SomethingWendWrong />;
+  if (error) return <SomethingWentWrong />;
 
   return (
     <View style={styles.container}>

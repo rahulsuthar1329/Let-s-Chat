@@ -16,11 +16,14 @@ import Send from '../../assets/send.png';
 import EmojiModal from 'react-native-emoji-modal';
 import Octicons from 'react-native-vector-icons/Octicons';
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {updateChat} from '../../features/ChatSlice';
-import {useGetMessagesQuery} from '../../services/chatApi';
+import {chatApi, useGetMessagesQuery} from '../../services/chatApi';
 import Loader from '../../components/Loader/Loader';
 import {MessageType} from '../../types/chatTypes';
-import SomethingWendWrong from '../../components/SomethingWentWrong/SomethingWendWrong';
+import SomethingWentWrong from '../../components/SomethingWentWrong/SomethingWentWrong';
+import {io} from 'socket.io-client';
+import {updateChat} from '../../features/ChatSlice';
+
+const socket = io('http://192.168.209.73:5001');
 
 const Conversation: React.FC = ({navigation, route}: any) => {
   const {chatDetails} = route.params;
@@ -29,33 +32,55 @@ const Conversation: React.FC = ({navigation, route}: any) => {
   const user = {_id: '5353'};
 
   const dispatch = useAppDispatch();
+
   const {
-    data: messages,
+    data: initialMessages,
     error,
     isLoading,
   } = useGetMessagesQuery(chatDetails._id);
 
+  const [messages, setMessages] = useState<MessageType[]>([]);
+
+  useEffect(() => {
+    if (initialMessages) {
+      if (messages.length) setMessages([...initialMessages, ...messages]);
+      else setMessages(initialMessages);
+    }
+  }, [initialMessages]);
+
+  useEffect(() => {
+    socket.emit('joinChat', chatDetails._id);
+
+    socket.on('newMessage', newMessage => {
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+    });
+
+    return () => {
+      socket.off('newMessage');
+      socket.emit('leaveChat', chatDetails._id);
+    };
+  }, []);
+
   if (isLoading) return <Loader />;
-  if (error) return <SomethingWendWrong />;
+  if (error) return <SomethingWentWrong />;
 
   const getMessageStyle = (sent: boolean, status: string | null) => {
     if (sent) {
-      if (status === 'pending') {
-        return [styles.msgSent, styles.pending];
-      }
       if (status === 'seen') return [styles.msgSent, styles.seen];
+      if (status === 'pending') return [styles.msgSent, styles.pending];
       if (status === 'received') return [styles.msgSent, styles.received];
     }
     return styles.msgReceive;
   };
+
   const showProfile = async () => {};
   const goBack = () => navigation.goBack();
   const toggleEmojiModal = () => setEmojiModal(!emojiModal);
   const sendMessage = () => {};
+  const openProfile = () => {};
 
   return (
     <View style={styles.container}>
-      {/* header */}
       <View style={styles.header}>
         <View style={styles.leftPortion}>
           <TouchableOpacity onPress={goBack} activeOpacity={0.8}>
@@ -67,16 +92,16 @@ const Conversation: React.FC = ({navigation, route}: any) => {
             onPress={showProfile}>
             <View>
               <Image
-                source={{
-                  uri: chatDetails?.profileImage,
-                }}
+                source={{uri: chatDetails?.profileImage}}
                 style={styles.image}
               />
             </View>
-            <View>
+            <TouchableOpacity activeOpacity={0.8} onPress={openProfile}>
               <Text style={styles.name}>{chatDetails?.chatName}</Text>
-              <Text style={styles.message}>{chatDetails?.lastSeen}</Text>
-            </View>
+              <Text style={styles.message}>
+                {chatDetails?.lastSeen || 'Click to see the group information'}
+              </Text>
+            </TouchableOpacity>
           </TouchableOpacity>
         </View>
         <View style={styles.rightPortion}>
@@ -89,7 +114,6 @@ const Conversation: React.FC = ({navigation, route}: any) => {
         </View>
       </View>
 
-      {/* Chat Area */}
       <View style={styles.chatArea}>
         <FlatList
           data={messages}
@@ -97,6 +121,7 @@ const Conversation: React.FC = ({navigation, route}: any) => {
           ListHeaderComponent={
             <Text style={styles.tooltip}>13 April 2023</Text>
           }
+          contentContainerStyle={styles.contentContainerStyle}
           renderItem={({item}: {item: MessageType}) => {
             return (
               <View
@@ -114,7 +139,6 @@ const Conversation: React.FC = ({navigation, route}: any) => {
         />
       </View>
 
-      {/* Input Area */}
       <View style={styles.inputArea}>
         <View style={styles.inputMessage}>
           <TouchableWithoutFeedback onPress={toggleEmojiModal}>
