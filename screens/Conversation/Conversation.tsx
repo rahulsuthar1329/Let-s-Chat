@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -15,23 +15,20 @@ import More from '../../assets/more.png';
 import Send from '../../assets/send.png';
 import EmojiModal from 'react-native-emoji-modal';
 import Octicons from 'react-native-vector-icons/Octicons';
-import {useAppDispatch, useAppSelector} from '../../hooks';
-import {chatApi, useGetMessagesQuery} from '../../services/chatApi';
+import {useGetMessagesQuery} from '../../services/chatApi';
 import Loader from '../../components/Loader/Loader';
 import {MessageType} from '../../types/chatTypes';
 import SomethingWentWrong from '../../components/SomethingWentWrong/SomethingWentWrong';
 import {io} from 'socket.io-client';
-import {updateChat} from '../../features/ChatSlice';
+import {baseUrl} from '../../path';
 
-const socket = io('http://192.168.209.73:5001');
+const socket = io(baseUrl);
 
 const Conversation: React.FC = ({navigation, route}: any) => {
   const {chatDetails} = route.params;
   const [message, setMessage] = useState('');
   const [emojiModal, setEmojiModal] = useState(false);
-  const user = {_id: '5353'};
-
-  const dispatch = useAppDispatch();
+  const user = {_id: '5353', username: 'rahul.123'};
 
   const {
     data: initialMessages,
@@ -52,7 +49,7 @@ const Conversation: React.FC = ({navigation, route}: any) => {
     socket.emit('joinChat', chatDetails._id);
 
     socket.on('newMessage', newMessage => {
-      setMessages(prevMessages => [...prevMessages, newMessage]);
+      setMessages(prevMessages => [newMessage, ...prevMessages]);
     });
 
     return () => {
@@ -76,7 +73,28 @@ const Conversation: React.FC = ({navigation, route}: any) => {
   const showProfile = async () => {};
   const goBack = () => navigation.goBack();
   const toggleEmojiModal = () => setEmojiModal(!emojiModal);
-  const sendMessage = () => {};
+
+  const sendMessage = () => {
+    try {
+      const messageObject: MessageType = {
+        chatId: chatDetails._id,
+        content: message,
+        seenBy: [],
+        receivedBy: [],
+        sender: `${user._id}-${user.username}`,
+        taggedUsers: [],
+        category: 'text',
+        uri: '',
+        status: 'received',
+      };
+      setMessages(prevMessages => [messageObject, ...prevMessages]);
+      socket.emit('newMessage', messageObject);
+      setMessage('');
+    } catch (error: any) {
+      console.log('SendMessageException: ', error.message);
+    }
+  };
+
   const openProfile = () => {};
 
   return (
@@ -117,10 +135,8 @@ const Conversation: React.FC = ({navigation, route}: any) => {
       <View style={styles.chatArea}>
         <FlatList
           data={messages}
+          inverted={true}
           keyExtractor={(_, index: number) => index.toString()}
-          ListHeaderComponent={
-            <Text style={styles.tooltip}>13 April 2023</Text>
-          }
           contentContainerStyle={styles.contentContainerStyle}
           renderItem={({item}: {item: MessageType}) => {
             return (
@@ -130,9 +146,19 @@ const Conversation: React.FC = ({navigation, route}: any) => {
                     ? styles.sentMessage
                     : styles.receiveMessage
                 }>
-                <Text style={getMessageStyle(false, 'seen')}>
+                <Text
+                  style={getMessageStyle(
+                    item.sender.split('-')[0] === user._id,
+                    item.status,
+                  )}>
                   {item.content}
                 </Text>
+                <View style={styles.msgExtraDetails}>
+                  {item.sender.includes(user._id) ? (
+                    <Octicons name="dot" size={15} color="green" />
+                  ) : null}
+                  <Text style={styles.msgTime}>10:30 PM</Text>
+                </View>
               </View>
             );
           }}

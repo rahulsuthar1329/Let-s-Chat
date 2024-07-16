@@ -7,6 +7,7 @@ export interface MessageType {
   taggedUsers: string[];
   category: string;
   uri: string;
+  status: string;
 }
 
 export interface ChatType {

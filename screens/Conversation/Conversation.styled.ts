@@ -81,9 +81,15 @@ export default StyleSheet.create({
   },
   sentMessage: {
     alignSelf: 'flex-end',
+    flexDirection: 'row-reverse',
+    alignItems: 'flex-end',
+    gap: 5,
   },
   receiveMessage: {
     alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 5,
   },
   pending: {
     backgroundColor: '#8694fa',
@@ -107,6 +113,10 @@ export default StyleSheet.create({
     borderRadius: 10,
     maxWidth: '80%',
   },
+  msgTime: {
+    fontSize: 8,
+  },
+  msgExtraDetails: {paddingBottom: 3, alignItems: 'flex-end'},
   inputArea: {
     flexDirection: 'row',
     justifyContent: 'center',
