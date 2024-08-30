@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {Alert, View} from 'react-native';
 import React, {useState} from 'react';
 import InputText from './../../components/InputText/InputText';
 import styles from './LoginScreen.styled';
@@ -43,16 +43,19 @@ const LoginScreen = ({navigation}: any) => {
       />
       <View style={styles.inputs}>
         <InputText
+          testID="username"
           placeholder="Username"
           state={username}
           setState={setUsername}
         />
         <InputText
+          testID="email"
           placeholder="Email Address"
           state={email}
           setState={setEmail}
         />
         <InputText
+          testID="password"
           type="password"
           placeholder="Password"
           state={password}
@@ -67,7 +70,11 @@ const LoginScreen = ({navigation}: any) => {
           <LinkText title="Forgot Password ?" onPress={goToForgetPassword} />
         </View>
         <Animated.View entering={FadeInUp.delay(400).duration(200).springify()}>
-          <Button title="Submit" onPress={handleLogin} />
+          <Button
+            title="Submit"
+            onPress={handleLogin}
+            accessibilityLabel="submitButton"
+          />
         </Animated.View>
       </View>
     </View>

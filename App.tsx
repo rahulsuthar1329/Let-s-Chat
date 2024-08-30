@@ -11,6 +11,11 @@ import RegisterScreen from './screens/RegisterScreen/RegisterScreen';
 import ForgotPassword from './screens/ForgotPassword/ForgotPassword';
 import {store} from './store';
 import {Provider} from 'react-redux';
+import {decryptMessage, encryptMessage} from './utils/cryptoService';
+
+const enctext = encryptMessage('HELLO WORLD');
+console.log(enctext);
+console.log(decryptMessage(enctext));
 
 const Stack = createNativeStackNavigator();
 
@@ -18,7 +23,7 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={Screen.chat}>
+        <Stack.Navigator initialRouteName={Screen.login}>
           <Stack.Screen
             name={Screen.home}
             component={HomeScreen}

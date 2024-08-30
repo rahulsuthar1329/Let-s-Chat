@@ -21,6 +21,7 @@ import {MessageType} from '../../types/chatTypes';
 import SomethingWentWrong from '../../components/SomethingWentWrong/SomethingWentWrong';
 import {io} from 'socket.io-client';
 import {baseUrl} from '../../path';
+import {showToast} from '../../components/Toast/Toast';
 
 const socket = io(baseUrl);
 
@@ -92,6 +93,7 @@ const Conversation: React.FC = ({navigation, route}: any) => {
       setMessage('');
     } catch (error: any) {
       console.log('SendMessageException: ', error.message);
+      showToast(error.message);
     }
   };
 
