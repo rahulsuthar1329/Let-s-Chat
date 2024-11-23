@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,8 @@ import SomethingWentWrong from '../../components/SomethingWentWrong/SomethingWen
 import {io} from 'socket.io-client';
 import {baseUrl} from '../../path';
 import {showToast} from '../../components/Toast/Toast';
+import {useAppDispatch, useAppSelector} from '../../hooks';
+import {addMessage} from '../../features/ChatSlice';
 
 const socket = io(baseUrl);
 
@@ -30,6 +32,9 @@ const Conversation: React.FC = ({navigation, route}: any) => {
   const [message, setMessage] = useState('');
   const [emojiModal, setEmojiModal] = useState(false);
   const user = {_id: '5353', username: 'rahul.123'};
+  const dispatch = useAppDispatch();
+  const chatt = useAppSelector(state => state.chatReducer.chats);
+  console.log(chatt);
 
   const {
     data: initialMessages,
@@ -89,6 +94,7 @@ const Conversation: React.FC = ({navigation, route}: any) => {
         status: 'received',
       };
       setMessages(prevMessages => [messageObject, ...prevMessages]);
+      dispatch(addMessage(messageObject));
       socket.emit('newMessage', messageObject);
       setMessage('');
     } catch (error: any) {

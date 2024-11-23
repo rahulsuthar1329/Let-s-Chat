@@ -49,6 +49,7 @@ export const chatSlice = createSlice({
       if (chat) Object.assign(chat, property);
     },
     addMessage: (state, action: PayloadAction<MessageType>) => {
+      console.log('Action: ', action.payload);
       const chat = GetChat(state.chats, action.payload.chatId);
       chat?.messages.push(action.payload);
     },
@@ -59,6 +60,7 @@ export const chatSlice = createSlice({
   },
 });
 
-export const {setChats, deleteChat, addChat, updateChat} = chatSlice.actions;
+export const {setChats, deleteChat, addChat, updateChat, addMessage} =
+  chatSlice.actions;
 
 export default chatSlice.reducer;

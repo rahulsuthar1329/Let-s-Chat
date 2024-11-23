@@ -20,8 +20,8 @@ const LoginScreen = ({navigation}: any) => {
   const dispatch = useAppDispatch();
 
   const handleLogin = () => {
-    if (!username || !email || !password)
-      return showToast('Please fill all the fields.');
+    // if (!username || !email || !password)
+    //   return showToast('Please fill all the fields.');
     dispatch(setUser({username, email, password}));
     navigation.navigate(Screen.chat);
   };
