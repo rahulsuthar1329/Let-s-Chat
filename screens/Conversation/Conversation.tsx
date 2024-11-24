@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -19,22 +19,23 @@ import {useGetMessagesQuery} from '../../services/chatApi';
 import Loader from '../../components/Loader/Loader';
 import {MessageType} from '../../types/chatTypes';
 import SomethingWentWrong from '../../components/SomethingWentWrong/SomethingWentWrong';
-import {io} from 'socket.io-client';
+// import {io} from 'socket.io-client';
 import {baseUrl} from '../../path';
 import {showToast} from '../../components/Toast/Toast';
 import {useAppDispatch, useAppSelector} from '../../hooks';
 import {addMessage} from '../../features/ChatSlice';
+import {useSocket} from '../../context/SocketContext';
 
-const socket = io(baseUrl);
+// const socket = io(baseUrl);
 
 const Conversation: React.FC = ({navigation, route}: any) => {
   const {chatDetails} = route.params;
   const [message, setMessage] = useState('');
   const [emojiModal, setEmojiModal] = useState(false);
+  const {sendMessage} = useSocket();
   const user = {_id: '5353', username: 'rahul.123'};
   const dispatch = useAppDispatch();
   const chatt = useAppSelector(state => state.chatReducer.chats);
-  console.log(chatt);
 
   const {
     data: initialMessages,
@@ -51,18 +52,18 @@ const Conversation: React.FC = ({navigation, route}: any) => {
     }
   }, [initialMessages]);
 
-  useEffect(() => {
-    socket.emit('joinChat', chatDetails._id);
+  // useEffect(() => {
+  //   socket.emit('joinChat', chatDetails._id);
 
-    socket.on('newMessage', newMessage => {
-      setMessages(prevMessages => [newMessage, ...prevMessages]);
-    });
+  //   socket.on('newMessage', newMessage => {
+  //     setMessages(prevMessages => [newMessage, ...prevMessages]);
+  //   });
 
-    return () => {
-      socket.off('newMessage');
-      socket.emit('leaveChat', chatDetails._id);
-    };
-  }, []);
+  //   return () => {
+  //     socket.off('newMessage');
+  //     socket.emit('leaveChat', chatDetails._id);
+  //   };
+  // }, []);
 
   if (isLoading) return <Loader />;
   if (error) return <SomethingWentWrong />;
@@ -80,28 +81,28 @@ const Conversation: React.FC = ({navigation, route}: any) => {
   const goBack = () => navigation.goBack();
   const toggleEmojiModal = () => setEmojiModal(!emojiModal);
 
-  const sendMessage = () => {
-    try {
-      const messageObject: MessageType = {
-        chatId: chatDetails._id,
-        content: message,
-        seenBy: [],
-        receivedBy: [],
-        sender: `${user._id}-${user.username}`,
-        taggedUsers: [],
-        category: 'text',
-        uri: '',
-        status: 'received',
-      };
-      setMessages(prevMessages => [messageObject, ...prevMessages]);
-      dispatch(addMessage(messageObject));
-      socket.emit('newMessage', messageObject);
-      setMessage('');
-    } catch (error: any) {
-      console.log('SendMessageException: ', error.message);
-      showToast(error.message);
-    }
-  };
+  // const sendMessage = () => {
+  //   try {
+  //     const messageObject: MessageType = {
+  //       chatId: chatDetails._id,
+  //       content: message,
+  //       seenBy: [],
+  //       receivedBy: [],
+  //       sender: `${user._id}-${user.username}`,
+  //       taggedUsers: [],
+  //       category: 'text',
+  //       uri: '',
+  //       status: 'received',
+  //     };
+  //     setMessages(prevMessages => [messageObject, ...prevMessages]);
+  //     dispatch(addMessage(messageObject));
+  //     // socket.emit('newMessage', messageObject);
+  //     setMessage('');
+  //   } catch (error: any) {
+  //     console.log('SendMessageException: ', error.message);
+  //     showToast(error.message);
+  //   }
+  // };
 
   const openProfile = () => {};
 
@@ -185,7 +186,9 @@ const Conversation: React.FC = ({navigation, route}: any) => {
             style={styles.msgBar}
           />
         </View>
-        <TouchableOpacity activeOpacity={0.8} onPress={sendMessage}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => sendMessage(message)}>
           <Image source={Send} style={styles.send} />
         </TouchableOpacity>
       </View>
